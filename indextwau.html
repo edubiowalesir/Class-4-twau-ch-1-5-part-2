@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TWAU Tug of War — Class 4 (Ch 1-5, Set 2)</title>
+<style>
+  :root{
+    --amber:#FFB300;
+    --gold:#FFD54F;
+    --bgA:#FFF8E1;
+    --bgB:#FFE0B2;
+    --teamA:#1E88E5;
+    --teamA-dark:#1257A0;
+    --teamB:#E53935;
+    --teamB-dark:#A11E1B;
+    --ink:#4A3300;
+    --green:#2E7D32;
+    --red:#C62828;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;min-height:100%;
+    font-family:'Comic Sans MS','Trebuchet MS',Verdana,sans-serif;
+    background:linear-gradient(135deg,var(--bgA),var(--bgB));
+    color:var(--ink);
+    overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:14px 16px 30px;
+  }
+  h1{
+    font-size:clamp(22px,3vw,40px);
+    margin:6px 0 4px;
+    text-align:center;
+    color:var(--ink);
+    text-shadow:1px 1px 0 #fff, 2px 2px 0 rgba(0,0,0,0.08);
+  }
+  .subtitle{
+    font-size:clamp(13px,1.6vw,19px);
+    margin-bottom:14px;
+    color:#7a5b00;
+    text-align:center;
+  }
+
+  .btn{
+    border:none;border-radius:16px;padding:14px 26px;font-family:inherit;
+    font-size:clamp(15px,1.6vw,21px);font-weight:bold;cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,0.2);transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,0.2);}
+  .btn-primary{background:linear-gradient(180deg,var(--gold),var(--amber));color:#4a3300;}
+  .btn-secondary{background:#fff;color:var(--ink);border:2px solid var(--amber);box-shadow:0 5px 0 #d9a300;}
+  .btn-small{padding:8px 14px;font-size:14px;border-radius:10px;}
+  .icon-btn{
+    background:#fff;border:2px solid var(--amber);border-radius:50%;
+    width:46px;height:46px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:20px;box-shadow:0 3px 0 #d9a300;
+  }
+  .icon-btn:active{transform:translateY(2px);box-shadow:none;}
+
+  .card{
+    background:#fffdf6;border-radius:22px;box-shadow:0 8px 24px rgba(0,0,0,0.12);
+    padding:26px 22px;width:100%;max-width:620px;
+  }
+  .team-input-row{display:flex;align-items:center;gap:10px;margin:10px 0;padding:12px 16px;border-radius:14px;}
+  .team-input-row.a{background:#E3F2FD;}
+  .team-input-row.b{background:#FFEBEE;}
+  .team-input-row .swatch{
+    width:38px;height:38px;border-radius:50%;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;
+  }
+  .team-input-row.a .swatch{background:var(--teamA);}
+  .team-input-row.b .swatch{background:var(--teamB);}
+  .team-input-row input{
+    flex:1;font-family:inherit;font-size:18px;padding:10px 12px;border-radius:10px;
+    border:2px solid #ddd;min-width:0;
+  }
+  .team-input-row.a input{border-color:var(--teamA);}
+  .team-input-row.b input{border-color:var(--teamB);}
+  .instructions{font-size:14.5px;line-height:1.6;margin:14px 0;background:#FFF3CD;border-radius:12px;padding:14px 16px;}
+  .center{text-align:center;}
+  .full{width:100%;}
+  .field-label{display:block;font-weight:bold;margin-bottom:6px;color:#7a5b00;}
+  .select-box{width:100%;font-family:inherit;font-size:16px;padding:11px 12px;border-radius:10px;border:2px solid var(--amber);background:#fff;}
+
+  #gameScreen{width:100%;max-width:1400px;display:none;flex-direction:column;align-items:center;}
+  .topbar{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
+
+  .track-wrap{
+    width:100%;background:#fffdf6;border-radius:20px;box-shadow:0 6px 16px rgba(0,0,0,0.1);
+    padding:16px 16px 20px;margin-bottom:10px;
+  }
+  .goal-labels{
+    display:flex;justify-content:space-between;font-size:clamp(11px,1vw,14px);font-weight:bold;
+    color:#8a6d00;margin-bottom:6px;padding:0 4px;
+  }
+  .track{
+    position:relative;height:76px;
+    background:repeating-linear-gradient(90deg,#e8dcb8,#e8dcb8 10px,#ddcfa2 10px,#ddcfa2 20px);
+    border-radius:14px;overflow:hidden;border:3px solid #c8a95a;
+  }
+  .track .midline{position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(0,0,0,0.25);}
+  .track .rope{
+    position:absolute;top:50%;left:0;right:0;height:7px;transform:translateY(-50%);
+    background:repeating-linear-gradient(90deg,#8d6e2f,#8d6e2f 8px,#6b5121 8px,#6b5121 16px);
+    border-radius:3px;
+  }
+  .zoneA, .zoneB{position:absolute;top:0;bottom:0;width:8%;}
+  .zoneA{left:0;background:rgba(30,136,229,0.18);}
+  .zoneB{right:0;background:rgba(229,57,53,0.18);}
+  .flag{
+    position:absolute;top:50%;width:52px;height:52px;transform:translate(-50%,-50%);
+    display:flex;align-items:center;justify-content:center;font-size:34px;
+    transition:left .55s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 3px 2px rgba(0,0,0,0.3));
+  }
+  .teamside{position:absolute;top:50%;transform:translateY(-50%);font-size:36px;}
+  .teamside.a{left:8px;}
+  .teamside.b{right:8px;}
+
+  .race-banner{
+    width:100%;text-align:center;padding:12px 14px;border-radius:14px;
+    font-weight:bold;font-size:clamp(15px,1.8vw,21px);margin-bottom:10px;color:#4a3300;
+    background:linear-gradient(90deg,var(--gold),var(--amber));box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .panels{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:10px;}
+  @media (max-width:760px){.panels{grid-template-columns:1fr;}}
+  .panel{border-radius:20px;padding:16px;box-shadow:0 6px 16px rgba(0,0,0,0.12);display:flex;flex-direction:column;}
+  .panel.a{background:#E3F2FD;border:3px solid var(--teamA);}
+  .panel.b{background:#FFEBEE;border:3px solid var(--teamB);}
+  .panel-header{
+    display:flex;align-items:center;justify-content:space-between;font-weight:bold;
+    font-size:clamp(15px,1.7vw,22px);border-radius:14px;padding:10px 14px;margin-bottom:6px;color:#fff;
+  }
+  .panel.a .panel-header{background:linear-gradient(90deg,var(--teamA),var(--teamA-dark));}
+  .panel.b .panel-header{background:linear-gradient(90deg,var(--teamB-dark),var(--teamB));}
+  .panel-progress{font-size:clamp(12px,1.2vw,15px);font-weight:bold;color:#8a6d00;text-align:center;margin-bottom:6px;}
+  .panel-timer-outer{width:100%;height:10px;background:#eee;border-radius:6px;overflow:hidden;margin-bottom:10px;box-shadow:inset 0 1px 3px rgba(0,0,0,0.15);}
+  .panel-timer-inner{height:100%;width:100%;background:linear-gradient(90deg,#66BB6A,#FFD54F,#EF5350);transition:width 1s linear;}
+  .panel-question{font-size:clamp(14px,1.6vw,20px);font-weight:bold;text-align:center;margin:2px 0 12px;line-height:1.4;min-height:3em;}
+  .panel-status{min-height:22px;text-align:center;font-weight:bold;font-size:clamp(12px,1.3vw,16px);margin-top:8px;}
+  .panel-status.good{color:var(--green);}
+  .panel-status.bad{color:var(--red);}
+  .panel-status.neutral{color:#8a6d00;}
+  .panel-skip{text-align:center;margin-top:8px;}
+
+  .options{display:flex;flex-direction:column;gap:12px;}
+  .opt{
+    display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#fff,#fdf3d6);
+    border:3px solid var(--amber);border-radius:16px;padding:16px 18px;min-height:68px;
+    font-size:clamp(14px,1.7vw,20px);font-weight:bold;cursor:pointer;text-align:left;
+    box-shadow:0 4px 0 #d9a300;transition:transform .08s ease, box-shadow .08s ease, background .2s ease;
+  }
+  .opt:active{transform:translateY(3px);box-shadow:0 1px 0 #d9a300;}
+  .opt .letter{
+    flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--amber);color:#4a3300;
+    display:flex;align-items:center;justify-content:center;font-size:15px;
+  }
+  .opt.correct{background:linear-gradient(180deg,#c8e6c9,#a5d6a7);border-color:var(--green);box-shadow:0 4px 0 #1b5e20;}
+  .opt.wrong{background:linear-gradient(180deg,#ffcdd2,#ef9a9a);border-color:var(--red);box-shadow:0 4px 0 #7f0000;}
+  .opt[disabled]{cursor:default;}
+  .opt:not([disabled]):hover{transform:translateY(-2px);}
+  .opt.finished-msg{cursor:default;background:linear-gradient(180deg,#fff9e0,#ffe9a8);border-color:var(--amber);text-align:center;justify-content:center;}
+
+  @media (min-width:1200px){
+    .opt{min-height:88px;padding:22px 20px;font-size:24px;}
+    .opt .letter{width:42px;height:42px;font-size:18px;}
+    .panel{padding:22px;}
+    .panel-header{font-size:24px;padding:14px 18px;}
+    .panel-question{font-size:24px;}
+    .race-banner{font-size:22px;padding:16px;}
+    .track{height:92px;}
+    .flag{font-size:40px;width:62px;height:62px;}
+    .teamside{font-size:44px;}
+  }
+
+  .footer-controls{width:100%;display:flex;justify-content:center;gap:10px;margin-top:6px;flex-wrap:wrap;}
+
+  #endScreen{display:none;width:100%;max-width:560px;text-align:center;}
+  .trophy{font-size:70px;margin-bottom:6px;}
+  .winner-name{font-size:clamp(22px,4vw,32px);font-weight:bold;margin-bottom:6px;}
+  .winner-sub{font-size:15px;color:#7a5b00;margin-bottom:18px;}
+  .final-scores{display:flex;justify-content:center;gap:18px;margin-bottom:20px;flex-wrap:wrap;}
+  .final-score-box{background:#fff;border-radius:14px;padding:12px 20px;box-shadow:0 4px 10px rgba(0,0,0,0.1);min-width:130px;}
+  .final-score-box .num{font-size:28px;font-weight:bold;}
+  .final-score-box .marks-label{font-size:12px;color:#7a5b00;}
+  .final-score-box.a .num{color:var(--teamA);}
+  .final-score-box.b .num{color:var(--teamB);}
+
+  #confettiCanvas{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:50;}
+  .hidden{display:none !important;}
+  .shake{animation:shakeAnim .35s;}
+  @keyframes shakeAnim{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+<div class="wrap">
+  <h1>🌏 TWAU Tug of War — Set 2</h1>
+  <div class="subtitle">Class 4 · Our Wondrous World · Chapters 1-5 · New Questions · Both Teams Race at Their OWN Pace!</div>
+
+  <!-- SETUP SCREEN -->
+  <div class="card" id="setupScreen">
+    <div class="team-input-row a">
+      <div class="swatch">🔵</div>
+      <input id="teamAName" type="text" maxlength="16" value="Team A" placeholder="Team A name">
+    </div>
+    <div class="team-input-row b">
+      <div class="swatch">🔴</div>
+      <input id="teamBName" type="text" maxlength="16" value="Team B" placeholder="Team B name">
+    </div>
+    <div style="margin:14px 0;">
+      <label for="chapterChoice" class="field-label">📚 Choose Chapter</label>
+      <select id="chapterChoice" class="select-box">
+        <option value="ch1" selected>Chapter 1 – Living Together</option>
+        <option value="ch2">Chapter 2 – Exploring Our Neighbourhood</option>
+        <option value="ch3">Chapter 3 – Nature Trail</option>
+        <option value="ch4">Chapter 4 – Growing up with Nature</option>
+        <option value="ch5">Chapter 5 – Food for Health</option>
+        <option value="mixed">Mixed – All 5 Chapters</option>
+      </select>
+    </div>
+    <div class="instructions">
+      🎮 <b>How to play (built for the 75" smartboard):</b><br>
+      Each team gets <b>10 questions</b> from the chosen chapter, with answer options shuffled independently for each team.<br>
+      ⚡ <b>Answer FAST — as soon as YOUR team answers, you move straight to your NEXT question.</b> You never wait for the other team!<br>
+      ✅ Correct → +1 mark and the rope pulls toward your side.<br>
+      ❌ Wrong or time runs out → no mark, no pull — but you still move on immediately.<br>
+      🏆 Marks are tracked separately for each team, out of 10.<br>
+      🏁 First team to pull the flag to their goal wins — or once both teams finish all 10, whoever's side the flag is on wins!<br>
+      🔀 Every Start (and Play Again) draws a fresh shuffled question order — never the same as last time.<br>
+      🆕 This is <b>Set 2</b> — a brand new set of questions for chapters 1-5, different from the first game.
+    </div>
+    <button class="btn btn-primary full" id="startBtn" onclick="startGame()">🚩 Start Game</button>
+    <div class="center" style="margin-top:10px;">
+      <button class="btn btn-secondary btn-small" onclick="toggleFullscreen()">⛶ Fullscreen (for smartboard)</button>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen">
+    <div class="topbar">
+      <button class="icon-btn" id="soundBtn" onclick="toggleSound()" title="Mute/Unmute">🔊</button>
+      <button class="icon-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+      <button class="icon-btn" onclick="confirmRestart()" title="Restart">🔁</button>
+    </div>
+
+    <div class="track-wrap">
+      <div class="goal-labels"><span id="goalA">TEAM A WINS</span><span id="goalB">TEAM B WINS</span></div>
+      <div class="track">
+        <div class="zoneA"></div>
+        <div class="zoneB"></div>
+        <div class="midline"></div>
+        <div class="rope"></div>
+        <div class="teamside a">🧑‍🤝‍🧑</div>
+        <div class="teamside b">🧑‍🤝‍🧑</div>
+        <div class="flag" id="flag" style="left:50%;">🚩</div>
+      </div>
+    </div>
+
+    <div class="race-banner">🏃 Race at YOUR OWN pace — answer fast, don't wait for the other team!</div>
+
+    <div class="panels">
+      <div class="panel a">
+        <div class="panel-header"><span id="panelAName">🔵 Team A</span><span id="panelAScore">Marks: 0/10</span></div>
+        <div class="panel-progress" id="panelProgressA">Question 1 of 10</div>
+        <div class="panel-timer-outer"><div class="panel-timer-inner" id="timerInnerA"></div></div>
+        <div class="panel-question" id="panelQuestionA">Loading question...</div>
+        <div class="options" id="optionsBoxA"></div>
+        <div class="panel-status neutral" id="statusA">Get ready...</div>
+        <div class="panel-skip"><button class="btn btn-secondary btn-small" onclick="skipTeam('A')">⏭️ Skip This Question</button></div>
+      </div>
+      <div class="panel b">
+        <div class="panel-header"><span id="panelBName">🔴 Team B</span><span id="panelBScore">Marks: 0/10</span></div>
+        <div class="panel-progress" id="panelProgressB">Question 1 of 10</div>
+        <div class="panel-timer-outer"><div class="panel-timer-inner" id="timerInnerB"></div></div>
+        <div class="panel-question" id="panelQuestionB">Loading question...</div>
+        <div class="options" id="optionsBoxB"></div>
+        <div class="panel-status neutral" id="statusB">Get ready...</div>
+        <div class="panel-skip"><button class="btn btn-secondary btn-small" onclick="skipTeam('B')">⏭️ Skip This Question</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="endScreen">
+    <div class="trophy" id="trophyIcon">🏆</div>
+    <div class="winner-name" id="winnerName">Team A Wins!</div>
+    <div class="winner-sub" id="winnerSub">Great tug of war battle!</div>
+    <div class="final-scores">
+      <div class="final-score-box a"><div id="finalAName">Team A</div><div class="num" id="finalAScore">0</div><div class="marks-label">marks out of 10</div></div>
+      <div class="final-score-box b"><div id="finalBName">Team B</div><div class="num" id="finalBScore">0</div><div class="marks-label">marks out of 10</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="playAgain()">🔁 Play Again</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   QUESTION BANKS — Class 4 TWAU Chapters 1-5, SET 2
+   (Our Wondrous World). A completely fresh set of 10
+   questions per chapter — different facts from Set 1 —
+   still built from the actual chapter content in Drive.
+   Each question stores the correct answer FIRST, then wrongs.
+   Options are shuffled independently for EACH team's panel.
+   ========================================================= */
+const CHAPTER_SETS = {
+
+ch1: [
+  {q:"Which community institutes does this unit say students will explore?", opts:["Schools, hospitals, banks and markets","Only farms","Only forests"]},
+  {q:"What do students learn about by interacting with people in banks?", opts:["The basics of financial literacy","How to cook","How to swim"]},
+  {q:"What skill do students develop through drawing, sketching and reading maps?", opts:["A sense of direction and finding places through landmarks","Cooking recipes","Growing plants"]},
+  {q:"According to the unit, what has 'transportation' helped with?", opts:["The movement of people and various goods","Only sports","Only shopping"]},
+  {q:"In the community connections table, what does a Road allow, besides connecting people?", opts:["Easy movement of goods and services","Selling food","Providing treatment"]},
+  {q:"Besides selling food items and clothes, what else does the shopkeeper do?", opts:["Sells local products","Provides safety","Delivers letters"]},
+  {q:"The chapter 'Living Together' helps students understand community as a space of togetherness and...?", opts:["Interdependence","Rivalry","Isolation"]},
+  {q:"What does the story of Van Mahotsav help students value?", opts:["Natural surroundings and public properties","Only sports equipment","Only money"]},
+  {q:"What do students discover through the festivals celebrated by different communities?", opts:["A culture of sharing and collaboration","A culture of competition","A culture of silence"]},
+  {q:"What does this chapter encourage students to learn about working with others?", opts:["To lead and work together to make a difference","To always work alone","To avoid teamwork"]}
+],
+
+ch2: [
+  {q:"Besides letters, what else was the postal service used to send?", opts:["Parcels and important documents","Only food","Only clothes"]},
+  {q:"Which inventions made communication easier after letters, according to the chapter?", opts:["The telephone, radio and television","The bicycle and the car","The umbrella and the fan"]},
+  {q:"What does the internet help us do, according to the chapter?", opts:["Connect with anyone, anywhere, in seconds","Grow crops faster","Cook food quickly"]},
+  {q:"In earlier times, how long could it take to get a reply to a letter?", opts:["Weeks","A few seconds","A few minutes"]},
+  {q:"What activity does the chapter suggest, to compare communication in the past and present?", opts:["An interview with elders","A cooking competition","A painting contest"]},
+  {q:"According to the chapter, today's messages and video calls make communication...?", opts:["Much faster","Much slower","Impossible"]},
+  {q:"What problem does the chapter mention about today's quick messages?", opts:["Wrong information can spread very quickly too","They cost too much money","They take too long to send"]},
+  {q:"Why do metro trains help people, according to Dada ji?", opts:["They travel very fast","They are very colourful","They are very quiet"]},
+  {q:"Besides metros, which other vehicles use flyovers, according to Dada ji?", opts:["Buses and cars","Bicycles only","Boats"]},
+  {q:"What have faster travel and communication done, according to the chapter?", opts:["Made significant changes to our lives and activities","Made no difference at all","Made travel more difficult"]}
+],
+
+ch3: [
+  {q:"In which vehicles did the students travel once they entered the forest?", opts:["Jeeps","Boats","Bicycles"]},
+  {q:"Which wild animals did the students wonder if they would see on the way?", opts:["Monkeys, deer, snakes, eagles and tigers","Cows, goats and hens","Fish and crabs"]},
+  {q:"According to the safety rules, what should we NOT bring into a forest, besides polythene bags?", opts:["Pets, firearms, or any kind of weapons","A water bottle","A notebook"]},
+  {q:"According to the safety rules, how should we behave in a new place like a forest?", opts:["Be careful","Run around quickly","Shout loudly"]},
+  {q:"According to the safety rules, what should we NOT damage in a forest, besides trees and flowers?", opts:["Public utilities","Our own shoes","Our own bags"]},
+  {q:"According to the safety rules, what should we NOT do with garbage in a forest?", opts:["Throw it in the forest","Carry it back home","Put it in a bag"]},
+  {q:"Besides plants and animals, what else does the chapter say nature is home to?", opts:["Birds and insects","Only rocks","Only rivers"]},
+  {q:"What will students develop, by exploring plants and animals in this chapter?", opts:["A deep appreciation for the environment","A fear of forests","A dislike of animals"]},
+  {q:"What connection does this unit highlight, besides the connection between plants and animals?", opts:["The connection between nature and culture","The connection between city and traffic","The connection between shops and money"]},
+  {q:"What did Abha Didi say to welcome the students when they arrived at Pachmarhi?", opts:["Welcome to Pachmarhi!","Goodbye, see you soon!","Please be quiet now!"]}
+],
+
+ch4: [
+  {q:"What is the local name for the Palash tree in Gujarat?", opts:["Kesuda","Neem","Peepal"]},
+  {q:"What happens to the forest when Palash flowers bloom, according to the chapter?", opts:["It looks reddish-orange from a distance","It turns completely white","It looks dark green"]},
+  {q:"Which plant parts are used to prepare a natural dye, according to the chapter?", opts:["Beetroot, hibiscus and marigold","Only sand and stones","Only plastic beads"]},
+  {q:"About how long should plant parts be boiled while preparing a natural dye?", opts:["30 minutes to an hour","Only 2 minutes","A whole week"]},
+  {q:"What do Gond artists paint, using natural colours?", opts:["Pictures of nature like trees, animals, birds and humans","Only geometric shapes","Only numbers"]},
+  {q:"Where does the name 'Jenu Kurubas' come from?", opts:["The word 'Jenu', meaning honey","The word 'Jenu', meaning river","The word 'Jenu', meaning mountain"]},
+  {q:"Why do the Jenu Kurubas sing songs while collecting honey?", opts:["To apologise to the bees, showing respect for nature","To scare the bees away","To make the honey sweeter"]},
+  {q:"What is 'Tumri', a traditional grain-storage container from Uttarakhand, made from?", opts:["A round or oval shaped dried bottle gourd","A block of solid iron","A sheet of plastic"]},
+  {q:"Which plant is given as an example whose leaves are used for their medicinal value?", opts:["Indian basil (Tulsi)","Sunflower","Rose"]},
+  {q:"What kind of festival were Reena and Amit's family celebrating during their village visit?", opts:["A harvest festival","A birthday party","A wedding"]}
+],
+
+ch5: [
+  {q:"What is the Hindi word for the 'salty' taste, among the six tastes (Shada Rasa)?", opts:["Namkeen","Meetha","Teekha"]},
+  {q:"What is the Hindi word for the 'sweet' taste?", opts:["Meetha","Khatta","Karva"]},
+  {q:"Which ingredient is given as an example of the 'salty' taste?", opts:["Salt","Jaggery","Tamarind"]},
+  {q:"Which ingredient is given as an example of the 'pungent' taste?", opts:["Green chilli","Neem","Raw mango"]},
+  {q:"Which ingredient is given as an example of the 'astringent' taste?", opts:["Raw mango","Salt","Jaggery"]},
+  {q:"Which ingredient is given as an example of the 'bitter' taste?", opts:["Neem","Tamarind","Green chilli"]},
+  {q:"Besides body building and energy, what else does food help protect us from, according to the unit?", opts:["Diseases","Rain","Cold weather only"]},
+  {q:"Besides balanced food, what else does the unit say our body needs enough of?", opts:["Clean water","Sugar only","Salt only"]},
+  {q:"Which of these traditional dishes was displayed at the food festival stalls?", opts:["Dhokla","Pizza","Burger"]},
+  {q:"Which of these traditional dishes was also displayed at the food festival?", opts:["Ragi laddu","Pasta","Sandwich"]}
+]
+
+};
+
+/* =========================================================
+   GAME STATE — fully independent per-team progression.
+   As soon as a team answers, THEY move to their next
+   question immediately. Neither team waits for the other.
+   ========================================================= */
+const ROUND_COUNT = 10;
+const PULL_AMOUNT = 10;
+const TIME_LIMIT = 20;
+
+let teamAName = 'Team A';
+let teamBName = 'Team B';
+let ropePos = 50;
+let gameOver = false;
+let soundOn = true;
+
+const T = {
+  A: { queue:[], index:0, score:0, finished:false, answered:false, timeLeft:20, timerHandle:null, nextHandle:null },
+  B: { queue:[], index:0, score:0, finished:false, answered:false, timeLeft:20, timerHandle:null, nextHandle:null }
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------- Sound ---------- */
+let audioCtx = null;
+function getCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } return audioCtx; }
+function beep(freq, dur, type, gainVal){
+  if(!soundOn) return;
+  try{
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = gainVal || 0.12;
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+    osc.stop(ctx.currentTime + dur);
+  }catch(e){}
+}
+function soundCorrect(){ beep(660,0.12,'sine',0.15); setTimeout(()=>beep(880,0.16,'sine',0.15),110); }
+function soundWrong(){ beep(180,0.3,'sawtooth',0.15); }
+function soundWin(){ [523,659,784,1046].forEach((n,i)=>setTimeout(()=>beep(n,0.22,'triangle',0.16), i*150)); }
+function toggleSound(){ soundOn = !soundOn; document.getElementById('soundBtn').textContent = soundOn ? '🔊' : '🔇'; }
+
+/* ---------- Setup / Start ---------- */
+function buildTeamQueues(){
+  const choice = document.getElementById('chapterChoice').value;
+  const pool = (choice === 'mixed')
+    ? Object.values(CHAPTER_SETS).reduce((acc, arr) => acc.concat(arr), [])
+    : CHAPTER_SETS[choice];
+
+  if(pool.length >= ROUND_COUNT * 2){
+    // Big enough pool -> give each team a genuinely different, non-overlapping 10.
+    const shuffledPool = shuffle(pool);
+    return { a: shuffledPool.slice(0, ROUND_COUNT), b: shuffledPool.slice(ROUND_COUNT, ROUND_COUNT * 2) };
+  }
+  // Small chapter pool (10 Qs) -> both teams cover the full chapter,
+  // each with independently shuffled order and independently shuffled options.
+  return { a: shuffle(pool).slice(0, ROUND_COUNT), b: shuffle(pool).slice(0, ROUND_COUNT) };
+}
+
+function startGame(){
+  teamAName = document.getElementById('teamAName').value.trim() || 'Team A';
+  teamBName = document.getElementById('teamBName').value.trim() || 'Team B';
+
+  const queues = buildTeamQueues();
+  ['A','B'].forEach(team=>{
+    T[team].queue = team === 'A' ? queues.a : queues.b;
+    T[team].index = 0;
+    T[team].score = 0;
+    T[team].finished = false;
+    T[team].answered = false;
+    clearInterval(T[team].timerHandle);
+    clearTimeout(T[team].nextHandle);
+  });
+  ropePos = 50;
+  gameOver = false;
+
+  document.getElementById('panelAName').textContent = '🔵 ' + teamAName;
+  document.getElementById('panelBName').textContent = '🔴 ' + teamBName;
+  document.getElementById('goalA').textContent = teamAName.toUpperCase() + ' WINS';
+  document.getElementById('goalB').textContent = teamBName.toUpperCase() + ' WINS';
+  document.getElementById('finalAName').textContent = teamAName;
+  document.getElementById('finalBName').textContent = teamBName;
+  updateScoreChip('A');
+  updateScoreChip('B');
+  updateFlag();
+
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'flex';
+
+  loadQuestionForTeam('A');
+  loadQuestionForTeam('B');
+}
+
+function updateScoreChip(team){
+  document.getElementById('panel' + team + 'Score').textContent = `Marks: ${T[team].score}/${ROUND_COUNT}`;
+}
+
+/* ---------- Per-team question rendering ---------- */
+function loadQuestionForTeam(team){
+  if(gameOver) return;
+  if(T[team].index >= ROUND_COUNT){
+    finishTeam(team);
+    return;
+  }
+  T[team].answered = false;
+  const q = T[team].queue[T[team].index];
+
+  document.getElementById('panelProgress' + team).textContent = `Question ${T[team].index + 1} of ${ROUND_COUNT}`;
+  document.getElementById('panelQuestion' + team).textContent = q.q;
+  setStatus(team, 'Answer now!', 'neutral');
+  renderOptions(team, q);
+  startTeamTimer(team);
+}
+
+function renderOptions(team, q){
+  const correctText = q.opts[0];
+  const shuffledOpts = shuffle(q.opts);
+  const box = document.getElementById('optionsBox' + team);
+  box.innerHTML = '';
+  const letters = ['A','B','C'];
+  shuffledOpts.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.dataset.correct = (optText === correctText) ? '1' : '0';
+    btn.innerHTML = `<span class="letter">${letters[idx]}</span><span>${optText}</span>`;
+    btn.onclick = () => selectOption(team, btn, optText === correctText);
+    box.appendChild(btn);
+  });
+}
+
+function setStatus(team, text, kind){
+  const el = document.getElementById('status' + team);
+  el.textContent = text;
+  el.className = 'panel-status ' + (kind || 'neutral');
+}
+
+function disableTeamButtons(team){
+  document.querySelectorAll('#optionsBox' + team + ' .opt').forEach(b => b.disabled = true);
+}
+
+function revealCorrect(team){
+  document.querySelectorAll('#optionsBox' + team + ' .opt').forEach(b => {
+    if(b.dataset.correct === '1') b.classList.add('correct');
+  });
+}
+
+/* ---------- Per-team timer ---------- */
+function startTeamTimer(team){
+  clearInterval(T[team].timerHandle);
+  T[team].timeLeft = TIME_LIMIT;
+  const inner = document.getElementById('timerInner' + team);
+  inner.style.transition = 'none';
+  inner.style.width = '100%';
+  void inner.offsetWidth;
+  inner.style.transition = 'width 1s linear';
+  T[team].timerHandle = setInterval(()=>{
+    T[team].timeLeft--;
+    const pct = Math.max(0, (T[team].timeLeft / TIME_LIMIT) * 100);
+    inner.style.width = pct + '%';
+    if(T[team].timeLeft <= 0){
+      clearInterval(T[team].timerHandle);
+      handleTeamTimeout(team);
+    }
+  }, 1000);
+}
+
+function handleTeamTimeout(team){
+  if(gameOver || T[team].answered || T[team].finished) return;
+  T[team].answered = true;
+  disableTeamButtons(team);
+  revealCorrect(team);
+  setStatus(team, "⏰ Time's up!", 'bad');
+  soundWrong();
+  scheduleTeamNext(team);
+}
+
+/* ---------- Answer handling (fully independent per team) ---------- */
+function selectOption(team, btnEl, isCorrect){
+  if(gameOver || T[team].answered || T[team].finished) return;
+  T[team].answered = true;
+  clearInterval(T[team].timerHandle);
+  disableTeamButtons(team);
+
+  if(isCorrect){
+    btnEl.classList.add('correct');
+    T[team].score++;
+    updateScoreChip(team);
+    setStatus(team, '✅ Correct! +1 mark', 'good');
+    soundCorrect();
+    pullRope(team, PULL_AMOUNT);
+  } else {
+    btnEl.classList.add('wrong');
+    revealCorrect(team);
+    setStatus(team, '❌ Not quite!', 'bad');
+    soundWrong();
+  }
+
+  scheduleTeamNext(team);
+}
+
+function scheduleTeamNext(team){
+  clearTimeout(T[team].nextHandle);
+  T[team].nextHandle = setTimeout(()=>{
+    if(gameOver) return;
+    T[team].index++;
+    loadQuestionForTeam(team);
+  }, 1100); // short pause to see feedback, THEN move on — never waits for the other team
+}
+
+function skipTeam(team){
+  if(gameOver || T[team].finished) return;
+  clearInterval(T[team].timerHandle);
+  clearTimeout(T[team].nextHandle);
+  T[team].index++;
+  loadQuestionForTeam(team);
+}
+
+function finishTeam(team){
+  T[team].finished = true;
+  clearInterval(T[team].timerHandle);
+  document.getElementById('panelProgress' + team).textContent = `All 10 done!`;
+  const inner = document.getElementById('timerInner' + team);
+  inner.style.width = '0%';
+  document.getElementById('panelQuestion' + team).textContent = '🏁 Finished! Well played!';
+  document.getElementById('optionsBox' + team).innerHTML = '<div class="opt finished-msg">Waiting for the other team to finish...</div>';
+  setStatus(team, `Final marks: ${T[team].score}/${ROUND_COUNT}`, 'good');
+  checkBothFinished();
+}
+
+function checkBothFinished(){
+  if(gameOver) return;
+  if(T.A.finished && T.B.finished){
+    endGame(null);
+  }
+}
+
+/* ---------- Rope / flag ---------- */
+function pullRope(team, amount){
+  if(team === 'A'){
+    ropePos = Math.max(0, ropePos - amount);
+  } else {
+    ropePos = Math.min(100, ropePos + amount);
+  }
+  updateFlag();
+  if(ropePos <= 4){
+    setTimeout(()=>endGame('A'), 900);
+  } else if(ropePos >= 96){
+    setTimeout(()=>endGame('B'), 900);
+  }
+}
+
+function updateFlag(){
+  document.getElementById('flag').style.left = ropePos + '%';
+}
+
+/* ---------- End game ---------- */
+function endGame(winner){
+  if(gameOver) return;
+  gameOver = true;
+  ['A','B'].forEach(team=>{
+    clearInterval(T[team].timerHandle);
+    clearTimeout(T[team].nextHandle);
+    disableTeamButtons(team);
+  });
+
+  if(winner === null){
+    if(ropePos < 50) winner = 'A';
+    else if(ropePos > 50) winner = 'B';
+    else winner = (T.A.score >= T.B.score) ? 'A' : 'B';
+  }
+
+  const winnerName = winner === 'A' ? teamAName : teamBName;
+  document.getElementById('trophyIcon').textContent = winner === 'A' ? '🔵🏆' : '🔴🏆';
+  document.getElementById('winnerName').textContent = `${winnerName} Wins the Tug of War! 🎉`;
+  document.getElementById('winnerSub').textContent = 'Great teamwork and TWAU knowledge!';
+  document.getElementById('finalAScore').textContent = T.A.score;
+  document.getElementById('finalBScore').textContent = T.B.score;
+
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'block';
+
+  soundWin();
+  launchConfetti();
+}
+
+function confirmRestart(){
+  if(confirm('Restart the game? Current progress will be lost.')){
+    ['A','B'].forEach(team=>{
+      clearInterval(T[team].timerHandle);
+      clearTimeout(T[team].nextHandle);
+    });
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('endScreen').style.display = 'none';
+    document.getElementById('setupScreen').style.display = 'block';
+  }
+}
+
+function playAgain(){
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('setupScreen').style.display = 'block';
+}
+
+/* ---------- Fullscreen ---------- */
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen().catch(()=>{});
+  }
+}
+
+/* ---------- Confetti ---------- */
+function launchConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#FFD54F','#FFB300','#1E88E5','#E53935','#66BB6A','#AB47BC'];
+  const pieces = [];
+  for(let i=0;i<140;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.5,
+      w: 6+Math.random()*6,
+      h: 8+Math.random()*10,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      speed: 2+Math.random()*3,
+      drift: -1.5+Math.random()*3,
+      rot: Math.random()*360,
+      rotSpeed: -6+Math.random()*12
+    });
+  }
+  let frames = 0;
+  const maxFrames = 260;
+  function draw(){
+    frames++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.y += p.speed; p.x += p.drift; p.rot += p.rotSpeed;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    if(frames < maxFrames){ requestAnimationFrame(draw); } else { ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  draw();
+}
+window.addEventListener('resize', ()=>{
+  const canvas = document.getElementById('confettiCanvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+/* ---------- Keyboard shortcuts (fallback for testing without touch) ----------
+   Team A: 1 / 2 / 3      Team B: F / G / H  */
+document.addEventListener('keydown', (e)=>{
+  if(document.getElementById('gameScreen').style.display !== 'flex') return;
+  const mapA = {'1':0,'2':1,'3':2};
+  const mapB = {'f':0,'g':1,'h':2};
+  const key = e.key.toLowerCase();
+  if(mapA.hasOwnProperty(e.key) && !T.A.answered && !T.A.finished){
+    const btns = document.querySelectorAll('#optionsBoxA .opt');
+    if(btns[mapA[e.key]]) btns[mapA[e.key]].click();
+  } else if(mapB.hasOwnProperty(key) && !T.B.answered && !T.B.finished){
+    const btns = document.querySelectorAll('#optionsBoxB .opt');
+    if(btns[mapB[key]]) btns[mapB[key]].click();
+  }
+});
+</script>
+</body>
+</html>
